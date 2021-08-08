@@ -4,6 +4,7 @@ import { Modal, Button,Form } from 'react-bootstrap';
 
 class Updatedmodel extends Component {
     render() {
+        console.log(this.props.title);
         return (
             <div>
                 <Modal show={this.props.showmodel} onHide={this.props.handelclose}>
@@ -14,13 +15,13 @@ class Updatedmodel extends Component {
                         <Form onSubmit={this.props.updatedData} >
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>color titel</Form.Label>
-                            <Form.Control type="text" placeholder="Enter color" defaultValue={this.props.title} />
+                            <Form.Control type="text"  defaultValue={this.props.title} name='title' />
                           
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>img</Form.Label>
-                            <Form.Control type="text" placeholder="image" defaultValue={this.props.imageUrl}/>
+                            <Form.Control type="text"  defaultValue={this.props.imageUrl} name='imageUrl'/>
                         </Form.Group>
                        
                         <Button variant="primary" type="submit" onClick={this.props.handelclose}>

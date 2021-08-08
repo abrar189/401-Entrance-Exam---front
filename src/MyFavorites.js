@@ -26,7 +26,7 @@ class MyFavorites extends React.Component {
     // http://localhost:3008/alldata?email=
     let resalldata = await axios.get(`http://localhost:3008/alldata?email=${email}`)
 
-    this.setState({
+   await this.setState({
       myfavdata: resalldata.data,
     })
     console.log(this.state.myfavdata);
@@ -67,6 +67,7 @@ class MyFavorites extends React.Component {
       imageUrl: e.target.imageUrl.value,
 
     }
+    
     // http://localhost:3008/update/index
 
     let resupdatedata = await axios.put(`http://localhost:3008/update/${this.state.index}`, updateopj
