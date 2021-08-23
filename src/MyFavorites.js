@@ -20,7 +20,7 @@ class MyFavorites extends React.Component {
   // http://localhost:3006/dataDB
   componentDidMount = async () => {
     const email = this.props.auth0.user.email;
-    let result = await axios.get(`http://localhost:3006/dataDB?email=${email}`);
+    let result = await axios.get(`${process.env.REACT_APP_SERVER}/dataDB?email=${email}`);
     this.setState({
       dataBok: result.data
     })
@@ -30,7 +30,7 @@ class MyFavorites extends React.Component {
 
   deleteFun = async (index) => {
     const email = this.props.auth0.user.email;
-    let result = await axios.delete(`http://localhost:3006/delete/${index}?email=${email}`);
+    let result = await axios.delete(`${process.env.REACT_APP_SERVER}/delete/${index}?email=${email}`);
     this.setState({
       dataBok: result.data
     })
@@ -64,7 +64,7 @@ updateFun= async(e)=>{
     img: e.target.img.value,
     level: e.target.level.value,
   }
-  let result = await axios.put(`http://localhost:3006/update/${this.state.index}`,newObj);
+  let result = await axios.put(`${process.env.REACT_APP_SERVER}/update/${this.state.index}`,newObj);
     this.setState({
       dataBok: result.data,
     

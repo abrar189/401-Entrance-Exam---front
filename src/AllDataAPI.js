@@ -13,7 +13,7 @@ class AllDataAPI extends Component {
     }
     // http://localhost:3006/dataDB
     componentDidMount = async () => {
-        let result = await axios.get(`http://localhost:3006/dataAPI`);
+        let result = await axios.get(`${process.env.REACT_APP_SERVER}/dataAPI`);
         this.setState({
             dataBok: result.data
         })
@@ -29,7 +29,7 @@ class AllDataAPI extends Component {
             level: this.state.dataBok[index].level,
 
         }
-        await axios.post(`http://localhost:3006/addtofav`, newObj)
+        await axios.post(`${process.env.REACT_APP_SERVER}/addtofav`, newObj)
     }
 
 
