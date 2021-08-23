@@ -3,82 +3,77 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './MyFavorites.css';
 import { withAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
-import { Card, Button } from 'react-bootstrap';
-import Updatedmodel from './Updatedmodel'
-// REACT_APP_SERVER=
+import CardFav from './components/CardFav';
+import UpdateModal from './components/UpdateModal';
+
+
 class MyFavorites extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      myfavdata: [],
-      index: 0,
-      showmodel: false,
-      title: '',
-      imageUrl: '',
-
-
-
+      dataBok: [],
+      show:false,
+      index:'',
+      selectData:{}
     }
   }
+  // http://localhost:3006/dataDB
   componentDidMount = async () => {
-    const { email } = this.props.auth0.user
-    console.log(email);
-    // http://localhost:3008/alldata?email=
-    let resalldata = await axios.get(`http://localhost:3008/alldata?email=${email}`)
-
-   await this.setState({
-      myfavdata: resalldata.data,
+    const email = this.props.auth0.user.email;
+    let result = await axios.get(`http://localhost:3006/dataDB?email=${email}`);
+    this.setState({
+      dataBok: result.data
     })
-    console.log(this.state.myfavdata);
+    console.log(this.state.dataBok);
   }
+  // http://localhost:3006/delete/idx
 
-  deletedcard = async (index) => {
-    let paramsopj = {
-      email: this.props.auth0.user.email
-    }
-    console.log(index);
-    // http://localhost:3008/delete/index
-    let resdelet = await axios.delete(`http://localhost:3008/delete/${index}`, { params: paramsopj })
+  deleteFun = async (index) => {
+    const email = this.props.auth0.user.email;
+    let result = await axios.delete(`http://localhost:3006/delete/${index}?email=${email}`);
+    this.setState({
+      dataBok: result.data
+    })
+  }
+  handleClose= async()=>{
+    this.setState({
+      show:false
+    })
+  }
+  handleshow= async (index)=>{
     await this.setState({
-      myfavdata: resdelet.data,
-      index: index
+      show:true,
+      index:index,
+      selectData:{
+        name: this.state.dataBok[index].name,
+        img: this.state.dataBok[index].img,
+        level: this.state.dataBok[index].level,
+      }
     })
+    console.log('hiiiiiiii',this.state.selectData);
+
   }
-  handelshow = (index) => {
+
+
+// http://localhost:3006/update/idx
+updateFun= async(e)=>{
+  e.preventDefault();
+  const newObj={
+    email: this.props.auth0.user.email,
+    name: e.target.name.value,
+    img: e.target.img.value,
+    level: e.target.level.value,
+  }
+  let result = await axios.put(`http://localhost:3006/update/${this.state.index}`,newObj);
     this.setState({
-      showmodel: true,
-      title: this.state.myfavdata.title,
-      imageUrl: this.state.myfavdata.imageUrl,
-      index: index,
-
-    })
-  }
-  handelclose = () => {
-    this.setState({
-      showmodel: false,
-    })
-  }
-
-  updatedData = async (e) => {
-    e.preventDefault()
-    let updateopj = {
-      email: this.props.auth0.user.email,
-      title: e.target.title.value,
-      imageUrl: e.target.imageUrl.value,
-
-    }
+      dataBok: result.data,
     
-    // http://localhost:3008/update/index
 
-    let resupdatedata = await axios.put(`http://localhost:3008/update/${this.state.index}`, updateopj
-    )
-    await this.setState({
-      myfavdata: resupdatedata.data,
     })
-
-  }
-
-
+    console.log('selected',this.state.selectData);
+    
+    console.log(this.state.dataBok);
+}
 
   render() {
     return (
@@ -87,25 +82,10 @@ class MyFavorites extends React.Component {
         <p>
           This is a collection of my favorites
         </p>
-        <div>
-          {this.state.myfavdata.map((ele, index) => {
-            return (
-              <Card style={{ width: '18rem', display: 'inline-block' }}>
-                <Card.Img variant="top" src={ele.imageUrl} />
-                <Card.Body>
-                  <Card.Title>{ele.title}</Card.Title>
-
-                  <Button variant="primary" onClick={() => this.deletedcard(index)}>delet</Button>
-                  <Button variant="primary" onClick={() =>this.handelshow(index)}>update</Button>
-
-                </Card.Body>
-              </Card>
-            )
-          })
-
-          }
-        </div>
-        <Updatedmodel imageUrl={this.state.imageUrl} title={this.state.title} showmodel={this.state.showmodel} handelshow={this.handelshow} handelclose={this.handelclose}  updatedData={this.updatedData} index={this.state.index} />
+       
+        <CardFav dataBok={this.state.dataBok} deleteFun={this.deleteFun} handleshow={this.handleshow}/>
+        <UpdateModal handleClose={this.handleClose} updateFun={this.updateFun} show={this.state.show}
+        selectData={this.state.selectData}/>
       </>
     )
   }
